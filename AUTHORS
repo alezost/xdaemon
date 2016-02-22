@@ -1,0 +1,4 @@
+Jouke Witteveen: wrote 'Xdaemon' script
+
+Alex Kost: wrote 'Xkill' script and auxiliary files for building the
+  package (configure.ac, Makefile.am)

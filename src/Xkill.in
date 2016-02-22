@@ -1,0 +1,70 @@
+#!@BASH@
+
+# Copyright (C) 2015 Alex Kost
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+LOCK_DIR="/tmp"
+
+usage () {
+    echo 'Usage: Xkill [OPTION ...] DISPLAY
+Kill Xorg server running on DISPLAY.
+
+Options:
+  -h, --help                    display help and exit;
+  -d, --directory=DIR           directory with the X lock-file.
+
+DISPLAY may be a number or a colon and a number (i.e., "0" or ":0").  It
+defines a name of the lock-file with X server PID.'
+}
+
+TEMP=`getopt --options hd: \
+             --longoptions help,directory: \
+             --name Xkill -- "$@"`
+eval set -- "$TEMP"
+
+while true; do
+    case "$1" in
+	-h | --help)
+            usage
+            exit 0 ;;
+	-d | --directory)
+            LOCK_DIR="$2"
+            shift 2 ;;
+	--)
+            shift
+            break ;;
+	*)
+            echo "Internal error!"
+            exit 1 ;;
+    esac
+done
+
+if [ -z "$1" ]; then
+    echo "Display should be specified"
+    exit 1
+else
+    DISPLAY="$1"
+fi
+
+# Remove trailing slash from LOCK_DIR and leading colon from DISPLAY if
+# they are specified.
+LOCK_FILE="${LOCK_DIR%/}/.X${DISPLAY#:}-lock"
+
+if [ -f "$LOCK_FILE" ]; then
+    kill $(cat "$LOCK_FILE")
+else
+    echo "File '$LOCK_FILE' does not exist"
+    exit 1
+fi

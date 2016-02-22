@@ -1,0 +1,11 @@
+*.log
+tmp
+Makefile
+Makefile.in
+/aclocal.m4
+/build-aux
+/autom4te.cache
+/config.status
+/configure
+/src/Xdaemon
+/src/Xkill

@@ -1,0 +1,41 @@
+There is a wonderful tiny [[https://github.com/joukewitteveen/xlogin/blob/master/x-daemon.in][bash script]] (thanks to Jouke Witteveen for
+this beauty!) that turns X server into a daemon.  Here is how it works:
+when you run this script, it starts X server and catches USR1 signal.
+When this signal is received, it means X server is ready to be used by
+clients, e.g. you can run a window manager on it, etc.  This SIGUSR1
+behaviour is documented in =man Xserver=.
+
+So this =Xdaemon= script can be used by such service managing programs
+as [[http://freedesktop.org/wiki/Software/systemd/][Systemd]] or [[http://www.gnu.org/software/shepherd/][Shepherd]].
+
+This repository exists because I wanted to make a general-purpose
+package that can be built using [[https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/The-GNU-Build-System.html#The-GNU-Build-System][The GNU Build System]].  Also I added
+=Xkill= script that allows to kill an X server run on a particular
+DISPLAY.
+
+Thus you can use the following sequence of commands to build and install
+this package:
+
+#+BEGIN_SRC sh
+autoreconf -vfi
+./configure
+make install
+#+END_SRC
+
+If you are not familiar with the GNU build system, here are some
+comments:
+
+- =autoreconf= is used to generate "configure" script.  This phase is
+  not needed for a release that already contains "configure" and
+  "Makefile.in" files (such a release is generated with "make dist"
+  command).
+
+- =configure= phase creates final files from ".in" files ("Makefile",
+  "src/Xdaemon" and "src/Xkill").
+
+- Invoking =make= (before =make install=) does nothing by itself as
+  there is nothing to compile – the ready-to-use scripts are generated
+  during the =configure= phase.
+
+- Finally, =make install= installs scripts to [[/usr/local/bin]] or another
+  configured directory (see "./configure -h").
