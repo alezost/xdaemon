@@ -6,7 +6,7 @@ clients, e.g. you can run a window manager on it, etc.  This SIGUSR1
 behaviour is documented in =man Xserver=.
 
 So this =Xdaemon= script can be used by such service managing programs
-as [[http://freedesktop.org/wiki/Software/systemd/][Systemd]] or [[http://www.gnu.org/software/shepherd/][Shepherd]].
+as [[http://freedesktop.org/wiki/Software/systemd/][Systemd]] or [[http://www.gnu.org/software/shepherd/][Shepherd]] (I use it in my [[https://github.com/alezost/shepherd-config][Shepherd config]]).
 
 This repository exists because I wanted to make a general-purpose
 package that can be built using [[https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/The-GNU-Build-System.html#The-GNU-Build-System][The GNU Build System]].  Also I added
