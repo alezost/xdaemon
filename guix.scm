@@ -17,7 +17,7 @@
 
 ;;; Commentary:
 
-;; This is a GNU Guix package for Xdaemon.  To build, run:
+;; This is a GNU Guix development package for Xdaemon.  To build, run:
 ;;
 ;;   guix build -f guix.scm
 
@@ -25,44 +25,48 @@
 
 (use-modules
  (guix packages)
- (guix download)
+ (guix git-download)
  (guix licenses)
  (guix build-system gnu)
  (gnu packages autotools)
  (gnu packages bash)
  (gnu packages xorg))
 
-(package
-  (name "xdaemon")
-  (version "0.1")
-  (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://github.com/alezost/xdaemon/archive/v"
-                  version ".tar.gz"))
-            (file-name (string-append name "-" version ".tar.gz"))
-            (sha256
-             (base32
-              "1k2cg6x1jzcpx1mq871ic04i5flg155f5rpn8jgmaj7agp8hibfx"))))
-  (build-system gnu-build-system)
-  (arguments
-   '(#:phases
-     (modify-phases %standard-phases
-       (add-after 'unpack 'bootstrap
-         (lambda _ (zero? (system* "autoreconf" "-vfi")))))))
-  (native-inputs
-   `(("autoconf" ,autoconf)
-     ("automake" ,automake)))
-  (inputs
-   `(("bash" ,bash)
-     ("xorg-server" ,xorg-server)))
-  (home-page "https://github.com/alezost/xdaemon")
-  (synopsis "Run X server as a daemon")
-  (description
-   "Xdaemon is a wrapper bash script that allows to turn X server into
-a daemon.  When Xdaemon is started, it runs Xorg server, then waits
+(define xdaemon-devel
+  (let ((commit "5cfc7925b051c6e0c5255f30934d8bb540c4edc3"))
+    (package
+      (name "xdaemon")
+      (version (string-append "0.1-1." (string-take commit 7)))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "git://github.com/alezost/xdaemon.git")
+                      (commit commit)))
+                (file-name (string-append name "-" version "-checkout"))
+                (sha256
+                 (base32
+                  "14qxips7rw3y0b6rlw4ixlk1djkz26ngd87fjb8xfl04gqnd7mdi"))))
+      (build-system gnu-build-system)
+      (arguments
+       '(#:phases
+         (modify-phases %standard-phases
+           (add-after 'unpack 'autogen
+             (lambda _ (zero? (system* "sh" "autogen.sh")))))))
+      (native-inputs
+       `(("autoconf" ,autoconf)
+         ("automake" ,automake)))
+      (inputs
+       `(("bash" ,bash)
+         ("xorg-server" ,xorg-server)))
+      (home-page "https://github.com/alezost/xdaemon")
+      (synopsis "Run X server as a daemon")
+      (description
+       "Xdaemon is a wrapper bash script that allows to turn X server
+into a daemon.  When Xdaemon is started, it runs Xorg server, then waits
 until it will be ready to accept connections from clients, and quits.
-Another script that comes with this package is Xkill.  It allows to kill
-an X server run on a particular @code{DISPLAY}.")
-  ;; 'Xdaemon' script is under FreeBSD, the rest is under GPL3 or later.
-  (license (list bsd-2 gpl3+)))
+Another script that comes with this package is Xkill.  It allows a user
+to kill an X server running on a particular @code{DISPLAY}.")
+      ;; 'Xdaemon' script is under FreeBSD, the rest is under GPL3 or later.
+      (license (list bsd-2 gpl3+)))))
+
+xdaemon-devel
