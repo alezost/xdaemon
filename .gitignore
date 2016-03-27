@@ -1,4 +1,6 @@
 *.log
+*.tar.gz
+*~
 tmp
 Makefile
 Makefile.in
